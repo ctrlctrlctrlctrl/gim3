@@ -11,7 +11,6 @@
     <modules>
         <module>gim3-common</module>
         <module>gim3-server-core</module>
-        <module>gim3-server-core</module>
     </modules>
 
 
