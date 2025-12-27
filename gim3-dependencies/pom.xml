@@ -34,7 +34,8 @@
         <druid.version>1.2.24</druid.version>
         <mybatis-plus-join-boot-starter.version>1.5.3</mybatis-plus-join-boot-starter.version>
         <guava.version>33.0.0-jre</guava.version>
-        <knife4j-openapi3-jakarta-spring-boot-starter.version>4.5.0</knife4j-openapi3-jakarta-spring-boot-starter.version>
+        <knife4j-openapi3-jakarta-spring-boot-starter.version>4.5.0
+        </knife4j-openapi3-jakarta-spring-boot-starter.version>
         <jsoup.version>1.19.1</jsoup.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.8.6</springdoc-openapi-starter-webmvc-ui.version>
         <commons-net.version>3.11.1</commons-net.version>
@@ -53,6 +54,9 @@
         <dubbo.seata.version>3.3.1</dubbo.seata.version>
         <mybatis.version>3.5.19</mybatis.version>
         <jackson.version>2.17.1</jackson.version>
+        <protobuf-java.version>4.33.2</protobuf-java.version>
+        <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
+        <os-maven.version>1.7.1</os-maven.version>
     </properties>
 
 
@@ -388,10 +392,33 @@
                 <version>${revision}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf-java.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <build>
+
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.xolstice.maven.plugins</groupId>
+                    <artifactId>protobuf-maven-plugin</artifactId>
+                    <version>${protobuf-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>kr.motd.maven</groupId>
+                    <artifactId>os-maven-plugin</artifactId>
+                    <version>${os-maven.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <!-- 统一 revision 版本 -->
             <plugin>

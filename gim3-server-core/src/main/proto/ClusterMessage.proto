@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+package com.guo.im.server.core.internal.model;
+
+message ClusterMessage {
+  string messageId = 1;
+  string sourceInstanceId = 2;
+  string targetInstanceId = 3;
+  google.protobuf.Any payload = 4;
+}

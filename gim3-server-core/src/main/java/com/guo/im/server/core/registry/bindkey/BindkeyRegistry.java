@@ -1,0 +1,17 @@
+package com.guo.im.server.core.registry.bindkey;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+public interface BindkeyRegistry {
+
+    void register(String bindKey, String deviceId, String connectId, Map<String, Object> metadata);
+
+    boolean deregister(String bindKey, String deviceId);
+
+    List<BindkeyRegistration> getBindkeys(Collection<String> bindKeys);
+
+    void watchBindkeys(BindkeyChangeListener listener);
+
+}
