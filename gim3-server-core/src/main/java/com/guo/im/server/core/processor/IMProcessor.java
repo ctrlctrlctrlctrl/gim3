@@ -9,6 +9,6 @@ import com.guo.im.server.core.biz.model.BizCommand;
  */
 public interface IMProcessor {
 
-    void process0(BizCommand bizCommand);
+    void process(BizCommand bizCommand);
 
 }

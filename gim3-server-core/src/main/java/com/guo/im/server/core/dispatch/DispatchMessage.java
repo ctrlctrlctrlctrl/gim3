@@ -1,6 +1,4 @@
-package com.guo.im.server.core.message;
-
-import com.guo.im.server.core.dispatch.PushTypeEnum;
+package com.guo.im.server.core.dispatch;
 
 import java.io.Serializable;
 

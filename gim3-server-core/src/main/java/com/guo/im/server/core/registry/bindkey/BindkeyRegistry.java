@@ -10,7 +10,7 @@ public interface BindkeyRegistry {
 
     boolean deregister(String bindKey, String deviceId);
 
-    List<BindkeyRegistration> getBindkeys(Collection<String> bindKeys);
+    List<BindkeyRegistration> getBindkeys(Collection<BindkeyParam> bindkeyParams);
 
     void watchBindkeys(BindkeyChangeListener listener);
 

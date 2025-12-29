@@ -5,7 +5,6 @@ import java.util.Map;
 
 public record IMChannelRegistration(
         String connectId,
-        String instanceId,
         Map<String,Object> metadata
 ) implements Serializable {
 }

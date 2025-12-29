@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface IMChannelRegistry {
 
-    void register(String instanceId, String connectId, Map<String, Object> metadata);
+    void register(String connectId, Map<String, Object> metadata);
 
     boolean deregister(String connectId);
 

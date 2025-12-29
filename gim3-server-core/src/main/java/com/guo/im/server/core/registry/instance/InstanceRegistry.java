@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public interface InstanceRegistry {
 
-    void register(String instanceId, String host, int port, Map<String, Object> metadata);
+    void register(String instanceId, Map<String, Object> metadata);
 
     boolean deregister(String instanceId);
 

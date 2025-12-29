@@ -5,8 +5,6 @@ import java.util.Map;
 
 public record InstanceRegistration(
         String instanceId,
-        String host,
-        int port,
         Map<String,Object> metadata
 ) implements Serializable {
 }

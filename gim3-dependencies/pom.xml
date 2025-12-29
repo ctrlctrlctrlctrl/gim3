@@ -57,6 +57,7 @@
         <protobuf-java.version>4.33.2</protobuf-java.version>
         <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
         <os-maven.version>1.7.1</os-maven.version>
+        <apache-commons-parent.version>93</apache-commons-parent.version>
     </properties>
 
 
@@ -396,6 +397,14 @@
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
                 <version>${protobuf-java.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-parent</artifactId>
+                <version>${apache-commons-parent.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
         </dependencies>

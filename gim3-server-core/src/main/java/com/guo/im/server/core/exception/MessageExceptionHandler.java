@@ -1,6 +1,6 @@
 package com.guo.im.server.core.exception;
 
-import com.guo.im.server.core.message.DispatchMessage;
+import com.guo.im.server.core.dispatch.DispatchMessage;
 
 /**
  * @author ： gyj
