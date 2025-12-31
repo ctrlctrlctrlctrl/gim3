@@ -13,16 +13,16 @@ public abstract class IMChannel {
 
     private IMConnect imConnect;
 
-    abstract String getConnectId();
+    public abstract String getConnectId();
 
-    abstract boolean isActive();
+    public abstract boolean isActive();
 
-    abstract boolean write(OutboundMessage outboundMessage);
+    public abstract boolean write(OutboundMessage outboundMessage);
 
-    abstract boolean close();
+    public abstract boolean close();
 
     @SneakyThrows
-    void read(InBoundMessage inboundMessage) {
+    public void read(InBoundMessage inboundMessage) {
 
         if (imConnect == null)
             throw new ChannelNotRegisteredException();
@@ -38,6 +38,10 @@ public abstract class IMChannel {
 
     protected void setIMConnect(IMConnect imConnect) {
         this.imConnect = imConnect;
+    }
+
+    protected IMConnect getIMConnect() {
+        return imConnect;
     }
 
 }

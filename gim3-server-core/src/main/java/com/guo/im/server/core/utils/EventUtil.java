@@ -13,14 +13,14 @@ import org.apache.commons.lang3.Validate;
  */
 public class EventUtil {
 
-    public void pulishEvent(IMEvent imEvent) {
+    public static void pulishEvent(IMEvent imEvent) {
 
         String instanceId = InstanceContext.getInstanceId();
 
         Validate.notBlank(instanceId, "实例上下文不存在");
     }
 
-    public void pulishEvent(String instanceId, IMEvent imEvent) {
+    public static void pulishEvent(String instanceId, IMEvent imEvent) {
 
         ServerManager serverManager = InstanceHolder.getServerManager(instanceId);
 

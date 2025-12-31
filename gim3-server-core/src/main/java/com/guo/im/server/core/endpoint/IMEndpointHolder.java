@@ -17,7 +17,7 @@ public class IMEndpointHolder {
 
     public static void putEndpoint(IMEndpoint imEndpoint, String endpointId) {
 
-        Validate.isTrue(IMENDPOINT_MAP.containsKey(imEndpoint), "端点已存在，不可重复注册");
+        Validate.isTrue(!IMENDPOINT_MAP.containsKey(imEndpoint), "端点已存在，不可重复注册");
 
         IMENDPOINT_MAP.put(imEndpoint, endpointId);
     }

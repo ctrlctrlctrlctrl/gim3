@@ -63,8 +63,8 @@ public class DefaultSingleIMChannelRegistry implements IMChannelRegistry {
 
         List<IMChannelRegistration> imChannelRegistrations = new ArrayList<>();
 
-        for (String instanceId : connectIds) {
-            IMChannelRegistration instanceRegistration = CHANNEL_REGISTRY.get(instanceId);
+        for (String connectId : connectIds) {
+            IMChannelRegistration instanceRegistration = CHANNEL_REGISTRY.get(connectId);
             if (instanceRegistration != null) {
                 imChannelRegistrations.add(instanceRegistration);
             }

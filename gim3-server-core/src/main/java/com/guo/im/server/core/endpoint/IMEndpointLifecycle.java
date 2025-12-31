@@ -32,9 +32,13 @@ public abstract class IMEndpointLifecycle {
 
         IMEndpointHolder.removeEndpoint(imEndpoint);
 
+        this.onEndpointClosed(imEndpoint);
+
         //todo 待补充通知远端端点已关闭
 
     }
+
+    public abstract void onEndpointClosed(IMEndpoint imEndpoint);
 
 
 }

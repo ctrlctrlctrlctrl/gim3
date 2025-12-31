@@ -1,7 +1,9 @@
 package com.guo.im.server.core.publish;
 
+import cn.hutool.core.collection.CollUtil;
 import com.guo.im.server.core.event.IMEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,10 +14,12 @@ import java.util.List;
 public class CompositeIMEventPublisher implements IMEventPublisher {
 
 
-    private final List<IMEventPublisher> imEventPublishers;
+    private final List<IMEventPublisher> imEventPublishers = new ArrayList<>();
 
     public CompositeIMEventPublisher(List<IMEventPublisher> imEventPublishers) {
-        this.imEventPublishers = imEventPublishers;
+        if (CollUtil.isNotEmpty(imEventPublishers)){
+            this.imEventPublishers.addAll(imEventPublishers);
+        }
     }
 
     @Override

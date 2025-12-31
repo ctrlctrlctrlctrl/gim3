@@ -28,7 +28,7 @@ public class DefaultSingleBindkeyRegistry implements BindkeyRegistry {
         Validate.notBlank(deviceId, "deviceId不可为空");
         Validate.notBlank(connectId, "connectId不可为空");
 
-        String matchPath = PatternRouter.joinPathWithDefaults(new String[]{bindKey, deviceId,null}, "[a-zA-Z0-9]+");
+        String matchPath = PatternRouter.joinPathWithDefaults(new String[]{bindKey, deviceId, null}, "*");
 
         RegistryActionEnum registryAction = null;
 
@@ -54,7 +54,24 @@ public class DefaultSingleBindkeyRegistry implements BindkeyRegistry {
     @Override
     public boolean deregister(String bindKey, String deviceId) {
 
-        String matchPath = PatternRouter.joinPathWithDefaults(new String[]{bindKey, deviceId,null}, "[a-zA-Z0-9]+");
+        String matchPath = PatternRouter.joinPathWithDefaults(new String[]{bindKey, deviceId, null}, "*");
+
+        List<BindkeyRegistration> matched = REGISTRY.match(matchPath);
+        for (BindkeyRegistration registration : matched) {
+            String removePath = PatternRouter.joinPath(registration.bindKey(), registration.deviceId(), registration.connectId());
+            REGISTRY.deregister(removePath);
+
+            this.notifyListeners(RegistryActionEnum.DEREGISTRY, registration);
+        }
+
+
+        return false;
+    }
+
+    @Override
+    public boolean deregister(String connectId) {
+
+        String matchPath = PatternRouter.joinPathWithDefaults(new String[]{null, null, connectId}, "*");
 
         List<BindkeyRegistration> matched = REGISTRY.match(matchPath);
         for (BindkeyRegistration registration : matched) {
@@ -72,7 +89,7 @@ public class DefaultSingleBindkeyRegistry implements BindkeyRegistry {
         } else {
             HashSet<String> paths = new HashSet<>();
             for (BindkeyParam bindkeyParam : bindkeyParams) {
-                paths.add(PatternRouter.joinPathWithDefaults(new String[]{bindkeyParam.bindKey(), bindkeyParam.deviceId()}, "[a-zA-Z0-9]+"));
+                paths.add(PatternRouter.joinPathWithDefaults(new String[]{bindkeyParam.bindKey(), bindkeyParam.deviceId(), bindkeyParam.connectId()}, "*"));
             }
             return new ArrayList<>(REGISTRY.match(paths));
         }
@@ -105,23 +122,24 @@ public class DefaultSingleBindkeyRegistry implements BindkeyRegistry {
             router.remove(pattern);
         }
 
-        public List<V> match(String path) {
+        // 注意：参数名为 pattern，表示这是一个通配符模式
+        public List<V> match(String pattern) {
             return router.entrySet().stream()
-                    .filter(e -> matcher.match(e.getKey(), path))
+                    .filter(e -> matcher.match(pattern, e.getKey()))
                     .map(Map.Entry::getValue)
                     .collect(Collectors.toList());
         }
 
-        public Set<V> match(Collection<String> paths) {
-            if (CollUtil.isEmpty(paths)) {
+        public Set<V> match(Collection<String> patterns) {
+            if (CollUtil.isEmpty(patterns)) {
                 return new HashSet<>(router.values());
             }
 
             return router.entrySet().stream()
                     .filter(e -> {
-                        String path = e.getKey();
-                        for (String paramt : paths) {
-                            if (matcher.match(path, paramt)) {
+                        String actualPath = e.getKey();
+                        for (String pattern : patterns) {
+                            if (matcher.match(pattern, actualPath)) {
                                 return true;
                             }
                         }
@@ -132,16 +150,13 @@ public class DefaultSingleBindkeyRegistry implements BindkeyRegistry {
         }
 
         public static String joinPath(Object... parts) {
-            // 检查是否有空值，若有则抛出异常
             for (Object part : parts) {
                 if (part == null || part.toString().isEmpty()) {
                     throw new IllegalArgumentException("路径中不能包含空值或空字符串");
                 }
             }
-
-            // 拼接路径
             return Arrays.stream(parts)
-                    .map(Object::toString)  // 使用toString拼接，为了可以将其base64编码解决拼接符的问题
+                    .map(Object::toString)
                     .collect(Collectors.joining("/"));
         }
 
@@ -151,6 +166,4 @@ public class DefaultSingleBindkeyRegistry implements BindkeyRegistry {
                     .collect(Collectors.joining("/"));
         }
     }
-
-
 }
