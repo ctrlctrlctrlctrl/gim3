@@ -32,16 +32,10 @@ public class IMChannelLifecycleTest {
     private static final BindkeyRegistry bindkeyRegistry = new DefaultSingleBindkeyRegistry();
 
     private static final IMChannelLifecycle imChannelLifecycle =new IMChannelLifecycle("instanceId", imChannelRegistry, bindkeyRegistry){
-
         @Override
-        public void onChannelCreated(IMChannel imChannel) {
-
-        }
-
+        public void onChannelCreated(IMChannel imChannel) {}
         @Override
-        public void onChannelClosed(String connectId) {
-
-        }
+        public void onChannelClosed(String connectId) {}
     };
 
 
@@ -61,6 +55,16 @@ public class IMChannelLifecycleTest {
             System.out.println(imChannel);
         }
         List<BindkeyRegistration> bindkeys = bindkeyRegistry.getBindkeys(CollUtil.newArrayList(new BindkeyParam(null, null, testIMChannel.getConnectId())));
+        for (BindkeyRegistration bindkey : bindkeys) {
+            System.out.println(bindkey);
+        }
+
+        imChannelLifecycle.channelClosed(testIMChannel.getConnectId());
+        imChannels = imChannelRegistry.getIMChannels(CollUtil.newArrayList(testIMChannel.getConnectId()));
+        for (IMChannelRegistration imChannel : imChannels) {
+            System.out.println(imChannel);
+        }
+        bindkeys = bindkeyRegistry.getBindkeys(CollUtil.newArrayList(new BindkeyParam(null, null, testIMChannel.getConnectId())));
         for (BindkeyRegistration bindkey : bindkeys) {
             System.out.println(bindkey);
         }
@@ -98,18 +102,10 @@ public class IMChannelLifecycleTest {
 
     class TestIMEndpoint implements IMEndpoint {
         @Override
-        public void start() {
-
-        }
-
+        public void start() {}
         @Override
-        public void stop() {
-
-        }
-
+        public void stop() {}
         @Override
-        public boolean isReady() {
-            return false;
-        }
+        public boolean isReady() {return false;}
     }
 }

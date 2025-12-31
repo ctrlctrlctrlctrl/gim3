@@ -97,7 +97,7 @@ public abstract class IMChannelLifecycle {
 
         // 删除bindkey的注册信息
         List<BindkeyRegistration> bindkeys = bindkeyRegistry.getBindkeys(CollUtil.newArrayList(new BindkeyParam(null, null, connectId)));
-        if (CollUtil.isEmpty(bindkeys)) {
+        if (CollUtil.isNotEmpty(bindkeys)) {
 
             for (BindkeyRegistration bindkey : bindkeys) {
                 bindkeyRegistry.deregister(bindkey.connectId());
@@ -135,7 +135,7 @@ public abstract class IMChannelLifecycle {
         // 删除imchannel的注册信息
         List<IMChannelRegistration> imChannels = imChannelRegistry.getIMChannels(CollUtil.newArrayList(bindkey.connectId()));
         if (CollUtil.isNotEmpty(imChannels)) {
-            if (imChannels.size() > 1){
+            if (imChannels.size() > 1) {
                 throw new ChannelRegistryRepeatException(bindkey.connectId());
             }
 
