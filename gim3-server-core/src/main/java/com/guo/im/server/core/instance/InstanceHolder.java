@@ -2,6 +2,7 @@ package com.guo.im.server.core.instance;
 
 import com.guo.im.server.core.ServerManager;
 
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -15,6 +16,10 @@ public class InstanceHolder {
 
     public static ServerManager getServerManager(String instanceId) {
         return SERVER_MANAGERS.get(instanceId);
+    }
+
+    public static Set<String> getInstanceIds() {
+        return SERVER_MANAGERS.keySet();
     }
 
     public static void register(String instanceId, ServerManager serverManager) {

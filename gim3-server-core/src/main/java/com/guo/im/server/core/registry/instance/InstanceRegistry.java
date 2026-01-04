@@ -17,6 +17,8 @@ public interface InstanceRegistry {
 
     List<InstanceRegistration> getInstances(Collection<String> instanceIds);
 
+    InstanceRegistration getInstance(String instanceId);
+
     void watchInstances(InstanceChangeListener listener);
 
 }

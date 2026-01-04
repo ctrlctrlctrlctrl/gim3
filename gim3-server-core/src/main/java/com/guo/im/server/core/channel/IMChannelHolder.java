@@ -2,7 +2,9 @@ package com.guo.im.server.core.channel;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -20,6 +22,10 @@ public class IMChannelHolder {
 
     public static IMChannel getChannel(String connectId) {
         return channelMap.get(connectId);
+    }
+
+    public static Collection<IMChannel> getChannels() {
+        return channelMap.values();
     }
 
     public static void removeChannel(String connectId) {

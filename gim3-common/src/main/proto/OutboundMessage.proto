@@ -9,5 +9,7 @@ message OutboundMessage {
   string messageId = 1;
   int32 cmd = 2;
   int64 timestamp = 3;
-  google.protobuf.Any payload = 4;
+  int32 payloadType = 4;
+  int32 payloadVersion = 5;
+  bytes  payload = 6;
 }

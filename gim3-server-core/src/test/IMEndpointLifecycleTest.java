@@ -23,7 +23,7 @@ public class IMEndpointLifecycleTest {
     @Test
     public void testCreate(){
         TestIMEndpoint testIMEndpoint = new TestIMEndpoint();
-        InstanceHolder.register("instanceId", new ServerManager(null, new CompositeIMEventPublisher(null)));
+        InstanceHolder.register("instanceId", new ServerManager(null, new CompositeIMEventPublisher(null),imEndpointLifecycle));
 
         imEndpointLifecycle.endpointCreated(testIMEndpoint);
 

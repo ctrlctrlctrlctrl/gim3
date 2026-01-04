@@ -8,5 +8,8 @@ message ClusterMessage {
   string messageId = 1;
   string sourceInstanceId = 2;
   string targetInstanceId = 3;
-  google.protobuf.Any payload = 4;
+  int32 clusterCMD = 4;
+  int32 payloadType = 5;
+  int32 payloadVersion = 6;
+  bytes payload = 7;
 }

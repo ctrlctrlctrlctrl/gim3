@@ -13,4 +13,8 @@ public class ChannelRegistryRepeatException extends IMException {
 
     private String connectId;
 
+    public ChannelRegistryRepeatException(String connectId,String message) {
+        super(message);
+        this.connectId = connectId;
+    }
 }

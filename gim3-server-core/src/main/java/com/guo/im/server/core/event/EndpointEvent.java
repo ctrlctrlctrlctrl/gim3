@@ -1,5 +1,6 @@
 package com.guo.im.server.core.event;
 
+import com.guo.im.server.core.endpoint.IMEndpoint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,5 +15,4 @@ public class EndpointEvent extends IMEvent {
 
     private final String instanceId;
     private final String endpointId;
-
 }

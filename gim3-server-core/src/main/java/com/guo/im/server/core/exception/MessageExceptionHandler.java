@@ -1,14 +1,14 @@
 package com.guo.im.server.core.exception;
 
-import com.guo.im.server.core.dispatch.DispatchMessage;
+import com.guo.im.server.core.exception.model.MessageExceptionContext;
 
 /**
  * @author ： gyj
  * @date ：2025/12/27 15:53
  * @modifiedBy ：
  */
-public interface MessageExceptionHandler {
+public interface MessageExceptionHandler <T> {
 
-    void handleException(DispatchMessage dispatchMessage, String reason);
+    void handleException(MessageExceptionContext<T> messageExceptionContext);
 
 }

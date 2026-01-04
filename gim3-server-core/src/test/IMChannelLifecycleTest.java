@@ -7,6 +7,7 @@ import com.guo.im.server.core.channel.IMChannel;
 import com.guo.im.server.core.channel.IMChannelLifecycle;
 import com.guo.im.server.core.endpoint.IMEndpoint;
 import com.guo.im.server.core.endpoint.IMEndpointHolder;
+import com.guo.im.server.core.endpoint.IMEndpointLifecycle;
 import com.guo.im.server.core.instance.InstanceHolder;
 import com.guo.im.server.core.publish.CompositeIMEventPublisher;
 import com.guo.im.server.core.registry.bindkey.BindkeyParam;
@@ -37,7 +38,12 @@ public class IMChannelLifecycleTest {
         @Override
         public void onChannelClosed(String connectId) {}
     };
-
+    private static final IMEndpointLifecycle imEndpointLifecycle = new IMEndpointLifecycle("instanceId") {
+        @Override
+        public void onEndpointCreated(IMEndpoint imEndpoint) {}
+        @Override
+        public void onEndpointClosed(IMEndpoint imEndpoint) {}
+    };
 
     @Test
     public void testCreate(){
@@ -46,7 +52,7 @@ public class IMChannelLifecycleTest {
         TestIMEndpoint testIMEndpoint = new TestIMEndpoint();
         TestIMChannel testIMChannel = new TestIMChannel();
         IMEndpointHolder.putEndpoint(testIMEndpoint, "endpointId");
-        InstanceHolder.register("instanceId", new ServerManager(null, new CompositeIMEventPublisher(null)));
+        InstanceHolder.register("instanceId", new ServerManager(null, new CompositeIMEventPublisher(null),imEndpointLifecycle));
 
         // 测试业务
         imChannelLifecycle.channelCreated(testIMChannel,testIMEndpoint);

@@ -8,4 +8,12 @@ import com.guo.im.common.exception.IMException;
  * @modifiedBy ：
  */
 public class ChannelNotRegisteredException extends IMException {
+
+    public ChannelNotRegisteredException() {
+        super();
+    }
+
+    public ChannelNotRegisteredException(String message) {
+        super(message);
+    }
 }

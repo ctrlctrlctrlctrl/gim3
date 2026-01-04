@@ -1,4 +1,6 @@
-package com.guo.im.server.core.dispatch;
+package com.guo.im.server.core.pipeline.pump;
+
+import com.guo.im.server.core.pipeline.processor.ClusterMessageProcessor;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
@@ -11,23 +13,23 @@ import java.util.concurrent.Executors;
  */
 public abstract class MessagePump {
 
-    private final Collection<MessageProcessor> messageProcessors;
+    protected final Collection<ClusterMessageProcessor> messageProcessors;
 
-    private boolean isStart = false;
+    protected boolean isStart = false;
 
     private ExecutorService work = Executors.newSingleThreadExecutor();
 
-    public MessagePump(Collection<MessageProcessor> messageProcessors) {
+    public MessagePump(Collection<ClusterMessageProcessor> messageProcessors) {
         this.messageProcessors = messageProcessors;
     }
 
-    abstract void run();
+    abstract void doRun();
 
     public void start() {
         synchronized (this) {
             if (!isStart){
                 isStart = true;
-                work.submit(this::run);
+                work.submit(this::doRun);
             }
         }
     }

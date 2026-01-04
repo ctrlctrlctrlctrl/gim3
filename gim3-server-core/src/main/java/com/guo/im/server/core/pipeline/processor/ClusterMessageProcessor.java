@@ -1,16 +1,19 @@
-package com.guo.im.server.core.dispatch;
+package com.guo.im.server.core.pipeline.processor;
 
 import com.guo.im.server.core.internal.model.ClusterMessageOuterClass;
+import com.guo.im.server.core.pipeline.MessageHandleModeEnum;
 
 import java.util.List;
 
-public interface MessageProcessor {
+public interface ClusterMessageProcessor {
 
-    String topic();
+    Integer topic();
 
     int batchSize();
 
     int period();
+
+    MessageHandleModeEnum handleMode();
 
     void onMessage(ClusterMessageOuterClass.ClusterMessage message);
 

@@ -1,4 +1,4 @@
-package com.guo.im.server.core.dispatch;
+package com.guo.im.server.core.pipeline;
 
 public enum PushTypeEnum {
 

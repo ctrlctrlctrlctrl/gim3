@@ -50,8 +50,6 @@ public abstract class IMEndpointLifecycle {
 
         EventUtil.pulishEvent(instanceId, new EndpointStopEvent(instanceId, endpointId));
 
-        //todo 待补充通知远端端点已关闭。是否要通过调用方式？是否可以通过事件监听的方式
-
     }
 
     public abstract void onEndpointClosed(IMEndpoint imEndpoint);

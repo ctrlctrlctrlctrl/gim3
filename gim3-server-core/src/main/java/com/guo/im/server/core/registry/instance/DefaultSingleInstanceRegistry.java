@@ -74,6 +74,14 @@ public class DefaultSingleInstanceRegistry implements InstanceRegistry {
     }
 
     @Override
+    public InstanceRegistration getInstance(String instanceId) {
+        if (INSTANCE_REGISTRY.containsKey(instanceId)) {
+            return INSTANCE_REGISTRY.get(instanceId);
+        }
+        return null;
+    }
+
+    @Override
     public void watchInstances(InstanceChangeListener listener) {
         if (listener != null) {
             LISTENERS.add(listener);
