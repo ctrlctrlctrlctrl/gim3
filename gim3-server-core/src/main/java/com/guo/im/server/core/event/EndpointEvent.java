@@ -15,4 +15,5 @@ public class EndpointEvent extends IMEvent {
 
     private final String instanceId;
     private final String endpointId;
+
 }

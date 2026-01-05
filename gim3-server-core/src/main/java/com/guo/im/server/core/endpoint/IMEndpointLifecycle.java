@@ -2,7 +2,7 @@ package com.guo.im.server.core.endpoint;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import com.guo.im.server.core.event.BindKeyEvent;
+import com.guo.im.server.core.channel.IMChannelLifecycle;
 import com.guo.im.server.core.event.EndpointReadyEvent;
 import com.guo.im.server.core.event.EndpointStopEvent;
 import com.guo.im.server.core.utils.EventUtil;
@@ -17,24 +17,27 @@ public abstract class IMEndpointLifecycle {
 
     private final String instanceId;
 
-    public IMEndpointLifecycle(String instanceId) {
+    private final IMChannelLifecycle imChannelLifecycle;
+
+    public IMEndpointLifecycle(String instanceId, IMChannelLifecycle imChannelLifecycle) {
         this.instanceId = instanceId;
+        this.imChannelLifecycle = imChannelLifecycle;
     }
 
     public void endpointCreated(IMEndpoint imEndpoint) {
 
         Validate.notNull(imEndpoint, "端点不能为空");
 
-        String endpointId = IdUtil.getSnowflakeNextIdStr();
-
-        IMEndpointHolder.putEndpoint(imEndpoint, endpointId);
+        imEndpoint.setIMChannelLifecycle(imChannelLifecycle);
 
         this.onEndpointCreated(imEndpoint);
+
+        String endpointId = IMEndpointHolder.getEndpointId(imEndpoint);
 
         EventUtil.pulishEvent(instanceId, new EndpointReadyEvent(instanceId, endpointId));
     }
 
-    public abstract void onEndpointCreated(IMEndpoint imEndpoint);
+    protected abstract void onEndpointCreated(IMEndpoint imEndpoint);
 
     public void endpointClosed(IMEndpoint imEndpoint) {
 
@@ -52,7 +55,7 @@ public abstract class IMEndpointLifecycle {
 
     }
 
-    public abstract void onEndpointClosed(IMEndpoint imEndpoint);
+    protected abstract void onEndpointClosed(IMEndpoint imEndpoint);
 
 
 }

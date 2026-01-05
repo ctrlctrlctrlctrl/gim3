@@ -5,7 +5,7 @@ import com.guo.im.common.utils.ThreadPoolExecutorFactory;
 import com.guo.im.server.core.instance.InstanceHolder;
 import com.guo.im.server.core.internal.model.ClusterMessageOuterClass;
 import com.guo.im.server.core.pipeline.Inlet.Inlet;
-import com.guo.im.server.core.pipeline.MessageHandleModeEnum;
+import com.guo.im.server.core.pipeline.processor.MessageHandleModeEnum;
 import com.guo.im.server.core.pipeline.processor.ClusterMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class DefaultMessagePump extends MessagePump {
 
     private static final ScheduledThreadPoolExecutor EXECUTOR = ThreadPoolExecutorFactory.getThreadPoolExecutor();
 
-    private final Set<String> instanceIds = InstanceHolder.getInstanceIds();
+    private final Set<String> instanceIds = InstanceHolder.getInstanceIds();//todo 有bug只能一次后续如果集群新增实例无法获取
 
     public DefaultMessagePump(Collection<ClusterMessageProcessor> messageProcessors, Inlet inlet) {
         super(messageProcessors);
@@ -57,9 +57,10 @@ public class DefaultMessagePump extends MessagePump {
                             EXECUTOR.schedule(this, 10, TimeUnit.SECONDS);
                         }
                         if (CollUtil.isNotEmpty(receive)) {
-                            if (Objects.equals(messageProcessor.handleMode(), MessageHandleModeEnum.SINGLE)) {// 单数据处理
+                            MessageHandleModeEnum messageHandleModeEnum = messageProcessor.handleMode();// 获取处理模式
+                            if (Objects.equals(messageHandleModeEnum, MessageHandleModeEnum.SINGLE)) {// 单数据处理
                                 receive.forEach(messageProcessor::onMessage);
-                            } else if (Objects.equals(messageProcessor.handleMode(), MessageHandleModeEnum.BATCH)) {// 批量数据处理
+                            } else if (Objects.equals(messageHandleModeEnum, MessageHandleModeEnum.BATCH)) {// 批量数据处理
                                 messageProcessor.onMessage(receive);
                             } else {
                                 log.error("DefaultMessagePump 的 {} 队列处理方式错误。", topic);

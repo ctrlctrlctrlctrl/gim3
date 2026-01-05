@@ -1,8 +1,10 @@
 package com.guo.im.server.core.publish;
 
+import cn.hutool.core.collection.CollUtil;
 import com.guo.im.server.core.event.IMEvent;
 import com.guo.im.server.core.listener.IMEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,10 +14,12 @@ import java.util.List;
  */
 public class CoreIMEventPublisher implements IMEventPublisher {
 
-    private final List<IMEventListener> coreIMEventListeners;
+    private final List<IMEventListener> coreIMEventListeners = new ArrayList<>();
 
     public CoreIMEventPublisher(List<IMEventListener> coreIMEventListeners) {
-        this.coreIMEventListeners = coreIMEventListeners;
+        if (CollUtil.isNotEmpty(coreIMEventListeners)){
+            this.coreIMEventListeners.addAll(coreIMEventListeners);
+        }
     }
 
 

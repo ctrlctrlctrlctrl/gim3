@@ -23,7 +23,7 @@ import java.util.concurrent.*;
 @Slf4j
 public class ServerManager {
 
-    private final String instanceId = IdUtil.getSnowflakeNextIdStr();
+    private final String instanceId;
     private volatile boolean isReady = false;
 
     private final Collection<IMEndpoint> imEndpoints = new ArrayList<>();
@@ -31,7 +31,8 @@ public class ServerManager {
     private final IMEndpointLifecycle lifecycle;
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
-    public ServerManager(Collection<IMEndpoint> imEndpoints, CompositeIMEventPublisher publisher, IMEndpointLifecycle lifecycle) {
+    public ServerManager(String instanceId, Collection<IMEndpoint> imEndpoints, CompositeIMEventPublisher publisher, IMEndpointLifecycle lifecycle) {
+        this.instanceId = instanceId;
         if (CollUtil.isNotEmpty(imEndpoints)) {
             this.imEndpoints.addAll(imEndpoints);
         }
@@ -41,16 +42,22 @@ public class ServerManager {
         executorService.scheduleWithFixedDelay(new EndpointMonitorTask(imEndpoints), 0, 500, TimeUnit.MILLISECONDS);
     }
 
-    public void start() {
+    public ServerManager(Collection<IMEndpoint> imEndpoints, CompositeIMEventPublisher publisher, IMEndpointLifecycle lifecycle) {
+        this(IdUtil.getSnowflakeNextIdStr(), imEndpoints, publisher, lifecycle);
+    }
+
+    public synchronized void start() {
 
         if (CollUtil.isNotEmpty(imEndpoints)) {
             for (IMEndpoint imEndpoint : imEndpoints) {
+                String endpointId = IdUtil.getSnowflakeNextIdStr();
+                IMEndpointHolder.putEndpoint(imEndpoint, endpointId);
+
                 if (!imEndpoint.isReady()) {
                     imEndpoint.start();
 
                     try {
                         // 发布端点启动事件
-                        String endpointId = IMEndpointHolder.getEndpointId(imEndpoint);
                         this.publish(new EndpointStartEvent(instanceId, endpointId));
                     } catch (Exception e) {
                         // 记录日志，不影响其他端点
@@ -64,7 +71,7 @@ public class ServerManager {
         this.publish(new InstanceStartEvent(instanceId));
     }
 
-    public void stop() {
+    public synchronized void stop() {
         if (CollUtil.isNotEmpty(imEndpoints)) {
             for (IMEndpoint imEndpoint : imEndpoints) {
                 if (imEndpoint.isReady()) {
@@ -81,6 +88,8 @@ public class ServerManager {
                 }
             }
         }
+
+        InstanceHolder.unregister(instanceId);
 
         this.publish(new InstanceStopEvent(instanceId));
     }

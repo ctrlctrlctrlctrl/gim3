@@ -1,5 +1,7 @@
 package com.guo.im.server.core.serializer;
 
+import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guo.im.common.enums.SerializerVersionEnum;
 
 /**
@@ -13,12 +15,13 @@ public class DefaultSerializer extends AbstractSerializer {
 
     @Override
     protected byte[] doSerialize(Object object) {
-        return new byte[0];
+        return JSONUtil.toJsonStr(object).getBytes();
     }
 
     @Override
     protected Object doDeserialize(byte[] bytes) {
-        return null;
+        String json = new String(bytes);
+        return JSONUtil.toBean(json, Object.class);
     }
 
     @Override

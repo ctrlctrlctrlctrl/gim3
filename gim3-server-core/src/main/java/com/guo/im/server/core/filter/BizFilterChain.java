@@ -1,5 +1,6 @@
 package com.guo.im.server.core.filter;
 
+import cn.hutool.core.collection.CollUtil;
 import com.guo.im.server.core.biz.model.BizCommand;
 
 import java.util.List;
@@ -12,16 +13,21 @@ import java.util.List;
 public class BizFilterChain {
 
     private final List<BizFilter> filters;
+    private final Runnable target;
     private int index = 0;
 
-    public BizFilterChain(List<BizFilter> filters) {
+    public BizFilterChain(List<BizFilter> filters, Runnable target) {
         this.filters = filters;
+        this.target = target;
     }
 
     public void doFilter(BizCommand command) {
-        if (index < filters.size()) {
+        if (CollUtil.isNotEmpty(filters) && index < filters.size()) {
             BizFilter current = filters.get(index++);
-            doFilter(command);
+            current.doFilter(command, this);
+        } else {
+            target.run(); // 唯一 doProcess 入口
         }
     }
 }
+

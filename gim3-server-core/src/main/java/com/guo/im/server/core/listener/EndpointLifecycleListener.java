@@ -12,6 +12,7 @@ import com.guo.im.server.core.registry.channel.IMChannelRegistration;
 import com.guo.im.server.core.registry.channel.IMChannelRegistry;
 import com.guo.im.server.core.registry.instance.InstanceRegistration;
 import com.guo.im.server.core.registry.instance.InstanceRegistry;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,7 @@ import java.util.Set;
  * @date ：2026/1/2 10:14
  * @modifiedBy ：
  */
+@Slf4j
 public class EndpointLifecycleListener implements IMEventListener {
 
     private final InstanceRegistry instanceRegistry;
@@ -43,6 +45,9 @@ public class EndpointLifecycleListener implements IMEventListener {
 
     @Override
     public void onEvent(IMEvent imEvent) {
+
+        log.debug("监听到Endpoint事件：{}", imEvent);
+
         EndpointEvent endpointEvent = (EndpointEvent) imEvent;
 
         InstanceRegistration instance = instanceRegistry.getInstance(endpointEvent.getInstanceId());
@@ -62,15 +67,13 @@ public class EndpointLifecycleListener implements IMEventListener {
     }
 
     private void onEndpointReady(EndpointReadyEvent endpointEvent, InstanceRegistration instance) {
-        Set<String> endpointIds = InstanceKey.ENDPOINT_IDS.get(instance.metadata());
-        endpointIds.add(endpointEvent.getEndpointId());
     }
 
     private void onEndpointClosed(EndpointStopEvent endpointEvent, InstanceRegistration instance) {
         Set<String> endpointIds = InstanceKey.ENDPOINT_IDS.get(instance.metadata());
         endpointIds.remove(endpointEvent.getEndpointId());
 
-        // 清空该端点的所有imChannel在IM核心的发现位置
+        // 清空该端点的所有IMChannel在IM核心的注册信息
         List<IMChannelRegistration> imChannels = imChannelRegistry.getIMChannels(null);
         if (CollUtil.isNotEmpty(imChannels)) {
             for (IMChannelRegistration imChannel : imChannels) {

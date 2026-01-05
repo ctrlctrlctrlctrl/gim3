@@ -1,5 +1,7 @@
 package com.guo.im.server.core.endpoint;
 
+import com.guo.im.server.core.channel.IMChannelLifecycle;
+
 public interface IMEndpoint {
 
     void start();
@@ -7,4 +9,6 @@ public interface IMEndpoint {
     void stop();
 
     boolean isReady();
+
+    void setIMChannelLifecycle(IMChannelLifecycle imChannelLifecycle);
 }

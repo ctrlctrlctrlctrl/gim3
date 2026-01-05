@@ -2,17 +2,18 @@ package com.guo.im.server.core.channel;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.RandomUtil;
 import com.guo.im.common.exception.bindkey.BindkeyRepeatException;
 import com.guo.im.common.exception.channel.ChannelRegistryRepeatException;
 import com.guo.im.server.core.constants.metadatakey.IMChannelKey;
-import com.guo.im.server.core.context.InstanceContext;
 import com.guo.im.server.core.endpoint.IMEndpoint;
 import com.guo.im.server.core.endpoint.IMEndpointHolder;
-import com.guo.im.server.core.event.BindKeyEvent;
-import com.guo.im.server.core.event.IMEvent;
+import com.guo.im.server.core.event.BindKeyCreateEvent;
+import com.guo.im.server.core.event.BindKeyUnbindEvent;
+import com.guo.im.server.core.event.ConnectEndEvent;
+import com.guo.im.server.core.event.ConnectReadyEvent;
 import com.guo.im.server.core.model.BindKey;
 import com.guo.im.server.core.model.IMConnect;
+import com.guo.im.server.core.processor.IMProcessorRouter;
 import com.guo.im.server.core.registry.bindkey.BindkeyParam;
 import com.guo.im.server.core.registry.bindkey.BindkeyRegistration;
 import com.guo.im.server.core.registry.bindkey.BindkeyRegistry;
@@ -35,11 +36,13 @@ public abstract class IMChannelLifecycle {
 
     private final IMChannelRegistry imChannelRegistry;
     private final BindkeyRegistry bindkeyRegistry;
+    private final IMProcessorRouter imProcessorRouter;
 
-    public IMChannelLifecycle(String instanceId, IMChannelRegistry imChannelRegistry, BindkeyRegistry bindkeyRegistry) {
+    public IMChannelLifecycle(String instanceId, IMChannelRegistry imChannelRegistry, BindkeyRegistry bindkeyRegistry, IMProcessorRouter imProcessorRouter) {
         this.instanceId = instanceId;
         this.imChannelRegistry = imChannelRegistry;
         this.bindkeyRegistry = bindkeyRegistry;
+        this.imProcessorRouter = imProcessorRouter;
     }
 
     public void channelCreated(IMChannel imChannel, IMEndpoint imEndpoint) {
@@ -74,10 +77,12 @@ public abstract class IMChannelLifecycle {
         imChannelRegistry.register(imChannel.getConnectId(), metadata);
 
         // 发布bindkey事件
-        EventUtil.pulishEvent(instanceId, new BindKeyEvent(bindkey.bindKey(), bindkey.deviceId(), imChannel.getConnectId()));
+        EventUtil.pulishEvent(instanceId, new BindKeyCreateEvent(bindkey.bindKey(), bindkey.deviceId(), imChannel.getConnectId()));
+        // 发布连接就绪事件
+        EventUtil.pulishEvent(instanceId, new ConnectReadyEvent(bindkey.bindKey(), bindkey.deviceId(), imChannel.getConnectId()));
     }
 
-    public abstract void onChannelCreated(IMChannel imChannel);
+    protected abstract void onChannelCreated(IMChannel imChannel);
 
     public void channelClosed(String connectId) {
 
@@ -103,12 +108,14 @@ public abstract class IMChannelLifecycle {
                 bindkeyRegistry.deregister(bindkey.connectId());
 
                 // 发布bindkey事件
-                EventUtil.pulishEvent(instanceId, new BindKeyEvent(bindkey.bindKey(), bindkey.deviceId(), connectId));
+                EventUtil.pulishEvent(instanceId, new BindKeyUnbindEvent(bindkey.bindKey(), bindkey.deviceId(), connectId));
+                // 发布连接关闭事件
+                EventUtil.pulishEvent(instanceId, new ConnectEndEvent(bindkey.bindKey(), bindkey.deviceId(), connectId));
             }
         }
     }
 
-    public abstract void onChannelClosed(String connectId);
+    protected abstract void onChannelClosed(String connectId);
 
     @SneakyThrows
     public void reBindKey(String oldBindKey, String oldDeviceId, String newBindKey, String newDeviceId) {
@@ -125,8 +132,14 @@ public abstract class IMChannelLifecycle {
 
         BindkeyRegistration bindkey = bindkeys.getFirst();
 
+        // 发布bindkey解绑事件
+        EventUtil.pulishEvent(instanceId, new BindKeyUnbindEvent(oldBindKey, oldDeviceId, bindkey.connectId()));
+
         // 重新注册bindkey
         bindkeyRegistry.register(newBindKey, newDeviceId, bindkey.connectId(), bindkey.metadata());
+
+        // 发布bindkey事件
+        EventUtil.pulishEvent(instanceId, new BindKeyCreateEvent(oldBindKey, oldDeviceId, bindkey.connectId()));
 
         // 更新imChannel的本地内存映射
         IMChannel channel = IMChannelHolder.getChannel(bindkey.connectId());

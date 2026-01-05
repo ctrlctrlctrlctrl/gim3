@@ -1,6 +1,9 @@
 package com.guo.im.server.core.processor;
 
 import com.guo.im.server.core.biz.model.BizCommand;
+import com.guo.im.server.core.filter.BizFilter;
+
+import java.util.List;
 
 /**
  * @author ： gyj
@@ -9,6 +12,6 @@ import com.guo.im.server.core.biz.model.BizCommand;
  */
 public interface IMProcessor {
 
-    void process(BizCommand bizCommand);
+    void process(BizCommand bizCommand, List<BizFilter> filters);
 
 }
